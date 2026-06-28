@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>庫樂思 新人入職系統</title>
+<style>
+:root {
+  /* Brand palette */
+  --cream-0: #FFFAF3;
+  --cream-1: #FFF2DB;
+  --cream-2: #FFE5BF;
+  --cream-3: #F5D4A0;
+  --red:     #F62440;
+  --red-dim: #C41A31;
+  --red-bg:  #FEE8EB;
+
+  /* Warm neutrals */
+  --gray-50: #FDFAF6;
+  --gray-100: #F3EDE4;
+  --gray-200: #E2D6C8;
+  --gray-400: #A8977F;
+  --gray-600: #6B5A42;
+  --gray-800: #2C1E0F;
+
+  /* Semantic tokens */
+  --text-primary:   #241508;
+  --text-secondary: #5C4830;
+  --text-muted:     #A8977F;
+  --border:         #EDD8BA;
+  --border-light:   #F5EAD8;
+  --bg-page:        #FFFAF3;
+  --bg-sidebar:     #FFF2DB;
+  --bg-white:       #FFFFFF;
+  --accent:         #F62440;
+  --accent-hover:   #C41A31;
+  --highlight:      #FFE5BF;
+  --highlight-border: #F5D4A0;
+
+  /* Legacy aliases kept for compatibility */
+  --blue-50:  #FFF2DB;
+  --blue-100: #FFE5BF;
+  --blue-200: #F5D4A0;
+  --blue-400: #F62440;
+  --blue-600: #C41A31;
+  --blue-800: #2C1E0F;
+  --yellow-50:  #FFF2DB;
+  --yellow-100: #FFE5BF;
+  --yellow-200: #F5D4A0;
+  --yellow-400: #F62440;
+  --yellow-600: #C41A31;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Layout */
+.shell { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* Header */
+.header {
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  height: 52px;
+}
+.logo {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #F62440;
+  margin-right: 28px;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.doc-tabs { display: flex; gap: 0; height: 100%; }
+.doc-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.doc-tab:hover { color: var(--text-secondary); }
+.doc-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.doc-tab .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .6; }
+.progress-chip {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.progress-track {
+  width: 100px;
+  height: 5px;
+  background: #FFE5BF;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #F62440, #C41A31);
+  border-radius: 99px;
+  width: 0%;
+  transition: width .4s;
+}
+
+/* Body layout */
+.body { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 12px 0;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--blue-200); border-radius: 99px; }
+
+.nav-section-label {
+  padding: 8px 16px 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 7px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  transition: all .12s;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--text-primary); background: #FFE5BF; }
+.nav-item.active {
+  color: #C41A31;
+  background: #FFE5BF;
+  border-left-color: #F62440;
+  font-weight: 600;
+}
+.nav-num {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding-top: 2px;
+  flex-shrink: 0;
+  min-width: 16px;
+  font-weight: 500;
+}
+.nav-item.active .nav-num { color: var(--accent); }
+
+/* Main content */
+.main { flex: 1; overflow-y: auto; padding: 36px 44px; }
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-thumb { background: var(--blue-200); border-radius: 99px; }
+
+.section { display: none; max-width: 760px; }
+.section.active { display: block; }
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #C41A31;
+  background: #FFE5BF;
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.section h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+/* Callout */
+.callout {
+  background: #FFF2DB;
+  border-left: 4px solid #F62440;
+  padding: 12px 16px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.callout.yellow {
+  background: #FFE5BF;
+  border-left-color: #F5D4A0;
+}
+.callout strong { color: var(--text-primary); }
+
+/* Section heading */
+.sh { font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin: 18px 0 8px; }
+
+/* List items */
+.list { margin: 0; }
+.li {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-light);
+}
+.li:first-child { border-top: none; }
+.li-bullet { color: var(--text-muted); flex-shrink: 0; font-weight: 500; min-width: 18px; }
+.li-key { font-weight: 600; color: var(--text-primary); flex-shrink: 0; min-width: 80px; }
+
+/* Cards grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+.card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+.card-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+.card-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+.card.blue-tint { background: #FFF2DB; border-color: #EDD8BA; }
+.card.yellow-tint { background: #FFE5BF; border-color: #F5D4A0; }
+
+/* Do/Don't */
+.dd { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.do-box {
+  background: #FFF2DB;
+  border: 1px solid #EDD8BA;
+  border-left: 3px solid #A8C4A0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 14px;
+}
+.dont-box {
+  background: #FEE8EB;
+  border: 1px solid #F9C0C8;
+  border-left: 3px solid #F62440;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 14px;
+}
+.do-label { font-size: 11px; font-weight: 700; color: #3E6E38; margin-bottom: 7px; letter-spacing: .04em; }
+.dont-label { font-size: 11px; font-weight: 700; color: #C41A31; margin-bottom: 7px; letter-spacing: .04em; }
+.do-box p { font-size: 13px; color: #3E6E38; line-height: 1.6; }
+.dont-box p { font-size: 13px; color: #C41A31; line-height: 1.6; }
+
+/* Checklist */
+.checklist-box {
+  background: #FFFAF3;
+  border: 1.5px solid #FFE5BF;
+  border-top: 3px solid #F62440;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-top: 24px;
+}
+.checklist-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #F62440;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.checklist-title svg { flex-shrink: 0; }
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 9px 0;
+  border-top: 1px solid #FFE5BF;
+}
+.check-row:first-of-type { border-top: none; }
+.check-row input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  accent-color: #F62440;
+  cursor: pointer;
+}
+.check-row label {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.check-row input:checked + label {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Tables */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.tbl thead th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #FFF2DB;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.tbl tbody td {
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-light);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.tbl tbody td:first-child { font-weight: 600; color: var(--text-primary); }
+.tbl tbody tr:hover td { background: #FFF2DB; }
+
+/* Q&A boxes */
+.qa-box {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 10px 0;
+}
+.qa-q { font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.qa-a { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* Blot boxes (盲點 style) */
+.bc-box {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--yellow-400);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 16px;
+  margin: 10px 0;
+}
+.bc-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+.bc-risk { font-size: 12.5px; color: #9B3030; margin-bottom: 4px; }
+.bc-fix { font-size: 12.5px; color: #2D6E2D; }
+
+/* Code / template block */
+.tpl-box {
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 2;
+  color: var(--text-secondary);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 99px;
+  margin-left: 6px;
+}
+.badge-blue { background: var(--blue-100); color: var(--blue-600); }
+.badge-yellow { background: var(--yellow-100); color: var(--yellow-600); }
+
+/* Step list */
+.step-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.step-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #F62440;
+  color: #FFFAF3;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-body { font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; padding-top: 3px; }
+.step-body strong { color: var(--text-primary); }
+
+/* Separator */
+.sep { border: none; border-top: 1px solid var(--border-light); margin: 20px 0; }
+
+/* Responsive */
+@media (max-width: 860px) {
+  .sidebar { width: 180px; }
+  .main { padding: 24px 24px; }
+  .grid-2, .dd { grid-template-columns: 1fr; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--blue-200); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">庫樂思 Curious</div>
+    <div class="doc-tabs">
+      <div class="doc-tab active" id="tab-0" onclick="switchDoc(0)">
+        <div class="dot"></div> 新人訓練路徑
+      </div>
+      <div class="doc-tab" id="tab-1" onclick="switchDoc(1)">
+        <div class="dot"></div> 新人生活與內部資訊手冊
+      </div>
+    </div>
+    <div class="progress-chip">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+      <span id="prog-label">0%</span>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="body">
+    <nav class="sidebar" id="sidebar-nav"></nav>
+    <main class="main" id="main-content"></main>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// Data
+// ─────────────────────────────────────────────
+const DOCS = [
+// ══════ DOC 0：新人訓練路徑 ══════
+{
+  label: '新人訓練路徑',
+  sections: [
+    {
+      num:'一', title:'訓練總目標', tag:'總覽',
+      html:`
+        <div class="callout">本文件提供給新進行政、課務、客服與營運夥伴使用。目的不是讓人死背課程名稱，而是讓新人能正確理解庫樂思的課程邏輯、判斷家長所在階段、避免錯誤承諾，並能在 LINE 對話中做出清楚、安全、可追蹤的回覆。</div>
+        <div class="sh">完成訓練後，應具備以下 8 項能力</div>
+        <div class="list">
+          ${['能說清楚庫樂思的核心定位','能分辨各項課程與賽事關係','能完成每日環境檢查、點名、LINE OA 維護、繳費通知、收款追蹤、請假補課交接','能判斷家長目前是在詢問、報名、繳費、銜接、賽季、比賽或補課哪一個階段','能清楚說明基礎培訓、銜接課程、暑期密集班、暑期集訓、賽季培訓、Meeting 等各名詞差異','能在回覆前確認費用範圍，避免家長誤以為某筆費用已包含後續課程或比賽','能知道哪些問題可以直接回覆，哪些必須先向其他人確認','能整理 LINE 對話中的待辦事項，並追蹤未解決問題'].map((t,i)=>`<div class="li"><span class="li-bullet">${i+1}.</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'二', title:'每天要確認四件事', tag:'日常',
+      html:`
+        <div class="grid-2">
+          ${[['到課確認','學生有沒有正確到課'],['LINE 維護','LINE 上的問題有沒有被回覆或轉交'],['費用追蹤','費用、資料、合約、表單有沒有被追蹤'],['待辦落地','老師或主管交代的事項有沒有落到可執行的待辦']].map(([t,b])=>`<div class="card blue-tint"><div class="card-title">${t}</div><div class="card-body">${b}</div></div>`).join('')}
+        </div>
+        <div class="sh">回覆原則</div>
+        <div class="list">
+          ${['不確定就先確認，不要猜','涉及費用先講涵蓋範圍，不只丟帳號','涉及賽隊先說評估，不保證安排','涉及補課先確認規則與老師時間，不直接承諾','涉及比賽先確認名稱、日期、費用、資格與報名狀態'].map(t=>`<div class="li"><span class="li-bullet">→</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'三', title:'新人要先建立的核心觀念', tag:'觀念',
+      html:`
+        <div class="callout yellow"><strong>庫樂思不是單純才藝班</strong>，而是以機器人競賽為核心，帶孩子從基礎能力、平台轉換、賽季培訓一路走到正式比賽。</div>
+        <div class="list">
+          ${['家長買的不是單一堂課，而是一段學習與競賽路徑','課程名稱、比賽名稱、硬體平台、費用項目很容易被家長混在一起','只要費用、賽隊資格、比賽、請假補課講不清楚，就容易造成後續誤會','新人回覆 LINE 時，重點不是回得快，而是回得準確、邊界清楚、可追蹤'].map(t=>`<div class="li"><span class="li-bullet">→</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'四', title:'完整學習路徑總覽', tag:'總覽',
+      html:`
+        <div class="callout">建議訓練期為 4 週，依新人狀況可壓縮或延長。</div>
+        <table class="tbl">
+          <thead><tr><th style="width:90px">階段</th><th style="width:110px">期間</th><th>學習重點</th><th>完成標準</th></tr></thead>
+          <tbody>
+            ${[['第 0 階段','到職前/第 1 天','公司定位、開通權限、可使用的工具','知道庫樂思在做什麼、資料在哪、有問題找誰'],['第 1 階段','第 1 週','課程地圖、行政日常、LINE 回覆','能分辨課程分類、能處理低風險 LINE 訊息'],['第 2 階段','第 2 週','收款追蹤、請假補課、課程認知','能做完收款流程、知道當日課程'],['第 3 階段','第 3 週','判斷認知','能處理常見問題並標記待辦'],['第 4 階段','第 4 週','實戰跟線與考核','能獨立處理行政與低風險對話'],['第 5 階段','第 3 週後半','LINE 回覆訓練：回覆前步驟、低/高風險判斷、待辦標記','能分辨可直接回覆與需確認的問題'],['第 6 階段','第 3～4 週','家長溝通語氣：對外原則、建議與不建議用語','能把模糊說法改成安全說法'],['第 7 階段','第 4～7 週','實戰跟線（4 週漸進）','完成 10 則低風險、5 則中風險草稿'],['考核','訓練結束後','五項考核全部通過','通過全部考核並獲主管確認'],['盲點複習','持續','5 大常見盲點確認','能自主發現回覆中邊界不清楚之處']].map(([a,b,c,d])=>`<tr><td>${a}</td><td style="font-weight:400;color:var(--text-muted)">${b}</td><td>${c}</td><td>${d}</td></tr>`).join('')}
+          </tbody>
+        </table>`,
+      checks:[]
+    },
+    {
+      num:'五', title:'第 0 階段：到職前與第 1 天', tag:'階段 0',
+      html:`
+        <div class="callout">目標：讓新人先知道公司在做什麼、東西在哪裡、不能亂回什麼。</div>
+        <div class="sh">必讀資料</div>
+        <div class="list">
+          ${['課程地圖','家長常見問答 FAQ','課程通知模板','未解決問題追蹤表'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="sh">第一天要知道的事</div>
+        <div class="list">
+          ${['主要溝通工具是 LINE 跟 Chat','家長訊息常常不是單一問題，而是隱含報名、繳費、補課、賽隊安排等多個待辦','不確定時，不要自行承諾課程、費用、名額、隊伍、比賽資格或補課方式','回覆家長前，先判斷家長目前在哪個階段'].map(t=>`<div class="li"><span class="li-bullet">→</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:['庫樂思主要服務哪一類家長與孩子？','為什麼家長會把課程、賽季、比賽和費用混在一起？','哪些問題不能自己直接承諾？']
+    },
+    {
+      num:'六', title:'第 1 階段：課程地圖與硬體分類', tag:'階段 1',
+      html:`
+        <div class="callout">目標：先用硬體平台理解課程，而不是只背班名。</div>
+        <div class="grid-2">
+          ${[['LEGO','小宇、柏逸','2027 賽季起預計淘汰','初階班 Spike → AERC / WRO / FLL<br>進階班 EV3 → WRO'],['Matrix','小宇','2026 轉換，2027 全面取代 LEGO','初階班 → WRO / FLL / JBC<br>進階班 → MARC / AERC'],['VEX IQ','語釩、蒜頭、子絖、太陽','國小至國中，塑膠卡扣','基礎培訓 → AERC<br>賽季培訓 → VIQRC'],['VEX V5','威德、小白、Andy','國中至高中，金屬結構件','基礎培訓 → 不直接對應比賽<br>賽季培訓 → V5RC']].map(([n,r,d,c])=>`<div class="card"><div class="card-title">${n} <span style="font-size:11px;color:var(--text-muted);font-weight:400">${r}</span></div><div class="card-sub">${d}</div><div class="card-body">${c}</div></div>`).join('')}
+        </div>`,
+      checks:['給一位國小高年級家長，說明 IQ 與 V5 的差異','給一位家長說明 Matrix 與 LEGO 的關係','給一位 V5 新手家長，說明 V5 基礎培訓與賽季培訓的差異']
+    },
+    {
+      num:'七', title:'第 2 階段：家長旅程與課程流程', tag:'階段 2',
+      html:`
+        <div class="callout">目標：理解家長不是只問單次課程，而是在進入一個漫長流程。</div>
+        <div class="sh">標準家長旅程</div>
+        <div class="step-list">
+          ${[['A｜前期諮詢','孩子姓名、年級、學校、是否有經驗；可上課時間；是否需要老師通話或面談'],['B｜確認方案與繳費','費用包含/不包含什麼；設繳費期限；告知名額上限'],['C｜培訓安排','安排課程班級；確認 Meeting 時段與自主練習；是否有請假補課需求'],['D｜比賽與追蹤','比賽名稱、日期、報名截止；確認費用；行前通知與攜帶物']].map(([t,b],i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body"><strong>${t}</strong><br>${b}</div></div>`).join('')}
+        </div>`,
+      checks:['家長問「這筆費用是不是全部？」時，應該怎麼回？','家長問「暑期密集班是不是暑期集訓？」時，應該怎麼回？','家長問「Meeting 跟自主練習差在哪？」時，應該怎麼回？']
+    },
+    {
+      num:'八', title:'第 3 階段：關鍵名詞定義', tag:'階段 3',
+      html:`
+        <div class="callout">目標：新人必須統一使用名詞，避免因口徑不同造成家長誤會。</div>
+        <div class="list">
+          ${[['基礎培訓','從零或從新平台開始建立能力，適用於真正剛接觸系統的學生'],['銜接課程','進入賽季培訓前的能力補強與平台轉換課，不是獨立新課程分支'],['暑期密集班','V5 賽季前的密集銜接課，費用不等於整個 V5 賽季費用'],['暑期集訓','已進入賽季或賽隊後，隊伍一起進行的集中訓練週'],['賽季培訓','以年度競賽為目標的正式培訓，包含 Meeting、集訓、賽事執行'],['Meeting','賽季中固定的隊伍訓練時段，請假可能影響隊伍進度'],['比賽','不同課程對應不同比賽，不要把課程名稱與比賽名稱混用']].map(([n,d])=>`<div class="li"><span class="li-key">${n}</span><span>${d}</span></div>`).join('')}
+        </div>`,
+      checks:['能用 1 分鐘說明基礎培訓與銜接課程差在哪裡','能用 1 分鐘說明暑期密集班與暑期集訓差在哪裡','能說明賽季培訓與比賽費用為什麼要分開說明']
+    },
+    {
+      num:'九', title:'第 4 階段：費用與邊界訓練', tag:'階段 4',
+      html:`
+        <div class="callout">目標：凡是可能被家長誤會的，都要寫清楚。</div>
+        <div class="sh">每次發送繳費資訊，必須包含以下 9 項</div>
+        <div class="list">
+          ${['費用名稱','費用金額','包含項目','不包含項目','後續是否另有費用','繳費期限','轉帳資訊','回報方式（後五碼）','是否需提供資料或簽署文件'].map((t,i)=>`<div class="li"><span class="li-bullet">${i+1}.</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="dd">
+          <div class="dont-box"><div class="dont-label">✕ 不建議寫法</div><p>「V5 培訓與設備費用說明：銜接培訓 $60,000，設備費 $56,500。」<br><br>家長可能誤以為這就是 V5 整個賽季費用。</p></div>
+          <div class="do-box"><div class="do-label">✓ 建議寫法</div><p>說明費用名稱、涵蓋週期（日期）、包含項目，並明確告知「若後續加入賽季培訓，將另有費用，屆時會再說明確認」。</p></div>
+        </div>`,
+      checks:['能改寫繳費通知，清楚說明這筆錢買的是什麼','能改寫繳費通知，清楚說明這筆錢沒有包含什麼','能改寫繳費通知，清楚說明後續還會發生什麼費用']
+    },
+    {
+      num:'十', title:'第 5 階段：LINE 回覆訓練', tag:'階段 5',
+      html:`
+        <div class="callout">目標：把 LINE 對話當成任務流來處理，而不是只看最後一則訊息。</div>
+        <div class="sh">回覆前 5 步驟</div>
+        <div class="step-list">
+          ${['看檔名與家長名稱，確認對象','看最近 10–20 則對話，確認脈絡','判斷目前階段：詢問、報名、繳費、上課、請假、補課、賽季、比賽','找出家長真正要解決的問題','判斷是否可直接回覆，或需轉老師、主管、會計'].map((t,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body">${t}</div></div>`).join('')}
+        </div>
+        <div class="dd">
+          <div class="do-box"><div class="do-label">✓ 可直接回覆</div><p>${['收到家長資料','收到轉帳後五碼，告知會請會計核對','提醒家長補資料','提醒上課時間','告知已轉達老師'].map(t=>`• ${t}`).join('<br>')}</p></div>
+          <div class="dont-box"><div class="dont-label">✕ 需確認後才能回覆</div><p>${['是否保證進賽隊','是否可退費折抵','是否包含比賽報名費','是否可加入已成形隊伍','教練對孩子程度的判斷'].map(t=>`• ${t}`).join('<br>')}</p></div>
+        </div>`,
+      checks:['能從 LINE 對話整理出家長問了什麼','能標記已解決與還沒解決的問題','能指出下一步由誰負責','能標記截止時間與是否已回覆家長','能判斷何時需要追蹤']
+    },
+    {
+      num:'十一', title:'第 6 階段：家長溝通語氣', tag:'階段 6',
+      html:`
+        <div class="callout">目標：做到清楚、穩定、禮貌，但不要過度承諾。</div>
+        <div class="sh">對外溝通原則</div>
+        <div class="list">
+          ${['先確認，再承諾','先說範圍，再給金額','先說流程，再請付款','先說不包含，再避免誤會','先說會確認，不要假裝知道'].map(t=>`<div class="li"><span class="li-bullet">→</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="sh">用語對照</div>
+        <div class="dd">
+          <div class="dont-box"><div class="dont-label">✕ 不建議用語</div><p>「這個都有包含。」<br>「應該可以。」<br>「老師會安排。」<br>「繳費後就可以加入。」<br>「比賽到時候再說。」</p></div>
+          <div class="do-box"><div class="do-label">✓ 建議用語</div><p>「這部分我先協助向老師確認，確認後再回覆您，避免資訊不完整。」<br><br>「賽隊安排會由老師依孩子程度、時間交集與隊伍狀況評估，確認後再通知。」</p></div>
+        </div>`,
+      checks:['能把「應該可以補課」改成「我先協助確認可安排的補課時段，再回覆您」','能把「繳費後加入賽隊」改成「完成報名後，老師會依孩子程度與隊伍狀況安排，確認後再通知您」','能在 3 種情境中使用正確的建議用語']
+    },
+    {
+      num:'十二', title:'第 7 階段：實戰跟線', tag:'階段 7',
+      html:`
+        <div class="callout">目標：在主管或資深同事陪同下，實際處理 LINE 對話，漸進獨立。</div>
+        <div class="step-list">
+          ${[['第 1 週：觀察','只觀察，不直接回覆高風險訊息。每天整理 5 則家長問題、標記類型、寫出建議回覆，由資深同事修正。'],['第 2 週：低風險回覆','可回覆：收到資料、匯款後五碼、轉請會計確認、提醒補資料、提醒上課時間。'],['第 3 週：中風險草稿送審','可草擬課程說明、密集班說明、賽季流程說明、補課初步說明，但需送審。'],['第 4 週：獨立處理一般對話','可獨立處理，但高額費用、賽隊承諾、退費折抵、家長不滿仍需主管確認。']].map(([t,b],i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body"><strong>${t}</strong><br>${b}</div></div>`).join('')}
+        </div>`,
+      checks:['完成 10 則低風險 LINE 回覆','完成 5 則中風險 LINE 回覆草稿','完成 3 則費用說明修正','完成 3 則待辦追蹤整理']
+    },
+    {
+      num:'十三', title:'新人考核', tag:'考核',
+      html:`
+        <div class="callout">通過考核代表<strong>能判斷問題風險</strong>，而不是能回答所有問題。</div>
+        <div class="list">
+          ${[['考核一：課程分類','給 10 個課程或對話名稱，分類到 LEGO / Matrix / VEX IQ / VEX V5 / 樂高未定義 / 其他'],['考核二：名詞解釋','口頭說明 7 個關鍵名詞：基礎培訓、銜接課程、暑期密集班、暑期集訓、賽季培訓、Meeting、比賽報名費'],['考核三：費用邊界','找出繳費通知中可能造成誤會的地方，並改寫'],['考核四：LINE 案例','整理一段對話的：家長問題、目前狀態、未解決點、下一步、負責人'],['考核五：實際回覆','完成 3 則草稿，主管確認不過度承諾、費用邊界清楚、語氣禮貌、下一步明確']].map(([n,d])=>`<div class="li"><span class="li-key" style="min-width:110px">${n}</span><span>${d}</span></div>`).join('')}
+        </div>`,
+      checks:['考核一：課程分類（10 個名稱）通過','考核二：7 個名詞解釋通過','考核三：費用邊界修正通過','考核四：LINE 案例判斷通過','考核五：3 則實際回覆草稿通過主管確認']
+    },
+    {
+      num:'十四', title:'新人最常見盲點', tag:'盲點',
+      html:`
+        <div class="callout yellow">家長不是聽不懂課程，而是聽不懂課程、賽季、費用、設備、比賽與隊伍安排之間的<strong>邊界</strong>。</div>
+        ${[['費用說太籠統','家長以為某筆費用包含整個賽季、設備與比賽','每次都要寫清楚「本次費用包含」與「後續若加入賽季另有」'],['密集班與集訓混淆','家長以為密集班就是賽隊集訓，或以為參加密集班就正式進隊','密集班是賽季前銜接，集訓是賽季後隊伍訓練'],['課程名與比賽名混用','家長不知道孩子報的是課程還是比賽','說明「課程對應哪個比賽」，不把比賽當課程名稱'],['太快請家長付款','家長付款後才發現後續還有賽季費、比賽費或時間衝突','高額費用或新手家長，付款前應通話或面談'],['未追蹤未解決問題','家長已問問題但沒被收斂，後續變成抱怨','每則對話都要標記是否已完成下一步']].map(([n,r,s])=>`<div class="bc-box"><div class="bc-title">${n}</div><div class="bc-risk">⚠ 風險：${r}</div><div class="bc-fix">✓ 修正：${s}</div></div>`).join('')}`,
+      checks:['能自主辨識「費用說太籠統」並修正','能分辨密集班與集訓，並對外說清楚','能分辨課程名與比賽名，不混用','知道哪些情境需要付款前通話或面談','每則 LINE 對話都能標記下一步是否完成']
+    },
+    {
+      num:'十五', title:'主管帶新人建議', tag:'主管',
+      html:`
+        <div class="callout">合格不代表所有問題都能自己回答，而是代表能<strong>判斷問題是否有風險、需要誰確認</strong>。</div>
+        <div class="sh">建議帶訓順序</div>
+        <div class="step-list">
+          ${['先講公司定位，不先講所有課名','用課程地圖帶硬體分類','用 3 則真實 LINE 對話示範家長會怎麼誤會','用費用通知示範包含與不包含','讓新人練習改寫模糊訊息','每天檢查新人整理的待辦','第 2 週開始讓新人回覆低風險訊息','第 4 週做完整考核'].map((t,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body">${t}</div></div>`).join('')}
+        </div>
+        <div class="sh">新人合格後應能判斷</div>
+        <div class="list">
+          ${['這個問題是否有風險','這個費用是否容易被誤解','這個家長是否需要通話或面談','這個孩子是否涉及賽隊安排','這個訊息是否需要主管、老師或會計確認','這段 LINE 是否還有未解決待辦'].map(t=>`<div class="li"><span class="li-bullet" style="color:var(--blue-400)">✓</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    }
+  ]
+},
+// ══════ DOC 1：新人生活與內部資訊手冊 ══════
+{
+  label: '新人生活與內部資訊手冊',
+  sections: [
+    {
+      num:'一', title:'這本手冊的用途', tag:'說明',
+      html:`
+        <div class="callout">本手冊提供給新進夥伴查詢日常內部資訊使用。遇到「我不知道去哪裡看」「這件事要問誰」「公司內部規則是什麼」時的查詢入口。</div>
+        <div class="sh">最常卡住的小問題</div>
+        <div class="list">
+          ${['今天有沒有課要去哪裡看？','公司行事曆在哪裡？','學生名單、點名表、付款紀錄在哪裡？','收到家長匯款後要丟到哪個群組？','要請假或調班要找誰？','冰箱飲品、垃圾、燈、冷氣誰負責？','看到家長問自己不知道的問題，要問誰？'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'二', title:'第一天', tag:'到職',
+      html:`
+        <div class="sh">報到後先確認</div>
+        <div class="list">
+          ${['自己的主管或主要交接人是誰','今天值班老師或現場負責人是誰','是否已加入必要的內部群組','是否已取得基本帳號與權限','是否知道公司行事曆、課程表、點名表在哪裡','是否知道當天課程與現場學生狀況'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="callout yellow" style="margin-top:16px">第一週的重點不是獨立處理所有事情，而是學會：<strong>資料去哪裡找、問題要問誰、哪些事情可以自己回、哪些事情一定要先確認、每件事處理完要記錄在哪裡。</strong></div>`,
+      checks:['已確認主管或主要交接人','已確認今天值班老師','已加入必要的內部群組','已取得基本帳號與權限','已知道公司行事曆與課程表位置','已知道當天課程與學生狀況']
+    },
+    {
+      num:'三', title:'到職權限與帳號', tag:'權限',
+      html:`
+        <div class="sh">必要權限清單</div>
+        <table class="tbl">
+          <thead><tr><th>權限 / 工具</th><th>負責確認人</th><th>用途</th></tr></thead>
+          <tbody>
+            ${[['Google 帳號','威德','文件、表單、試算表、課程資料'],['協會帳號','威德','比賽、協會相關行政'],['Synology 帳號','威德','內部檔案與交接'],['LINE 官方帳號權限','Andy','家長訊息、標籤、廣播、對話管理'],['LINE 交接事項','冠辰','日常行政與待辦交接']].map(([a,b,c])=>`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <div class="sh">權限尚未開通怎麼辦</div>
+        <div class="step-list">
+          ${['先確認是哪一個工具不能用','找對應負責人','說明自己需要做什麼工作、缺哪個權限','開通後測試是否能正常登入與查看資料'].map((t,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body">${t}</div></div>`).join('')}
+        </div>
+        <div class="callout yellow">不要用私人帳號隨意轉存或分享內部文件、家長資料、學生資料、付款紀錄。</div>`,
+      checks:['Google 帳號開通完成','協會帳號開通完成','Synology 帳號開通完成','LINE 官方帳號權限開通完成']
+    },
+    {
+      num:'四', title:'常用資料去哪裡看', tag:'資料',
+      html:`
+        ${[['公司行事曆','看課程停課日、集訓與特殊活動、自己的休假安排。若行事曆與 LINE 通知不一致，先確認再回覆家長。'],['課程表','查每週課程、老師時段、學生名單、點名表。課程表可能因老師、比賽、連假臨時調整，回覆前先確認版本。'],['學生名單','查學生姓名、家長名稱、班級、課程、賽隊。同一學生可能跨課程或有兄弟姊妹一起上課，不要只靠記憶判斷。'],['點名表','登記出席，查請假、補課狀態。學生超過 10 分鐘未出席，應在 LINE 詢問家長；無回覆則打電話。'],['付款紀錄','查家長是否已繳費。收到後五碼不等於款項已確認，必須等學費管理群組確認後才能回覆家長。'],['FAQ 常見問答','查常見家長問題、請假補課、費用等說法。FAQ 是輔助，不是最終裁決；涉及個別孩子仍需確認。']].map(([n,d])=>`<div class="bc-box" style="border-left-color:var(--blue-400)"><div class="bc-title">${n}</div><div class="qa-a">${d}</div></div>`).join('')}`,
+      checks:[]
+    },
+    {
+      num:'五', title:'常用工具總覽', tag:'工具',
+      html:`
+        <table class="tbl">
+          <thead><tr><th>工具</th><th>用途</th><th>新人注意</th></tr></thead>
+          <tbody>
+            ${[['LINE OA','家長溝通、標籤、對話追蹤','不確定不要自行承諾'],['Google Drive','文件、表單、簡報、課表','注意版本是否最新'],['Google Calendar','行事曆、課程、活動','與 LINE 通知不一致時要確認'],['Synology Sheets','學生名單、點名、收款、課程表','不要誤改公式或欄位'],['Synology Chat','內部交接與討論','問題要丟到正確群組'],['學費管理群組','匯款與收款確認','收到後五碼後需等確認']].map(([a,b,c])=>`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`).join('')}
+          </tbody>
+        </table>`,
+      checks:[]
+    },
+    {
+      num:'六', title:'內部群組與溝通規則', tag:'溝通',
+      html:`
+        <div class="sh">Synology Chat 群組用途</div>
+        <table class="tbl">
+          <thead><tr><th>群組</th><th>主要用途</th></tr></thead>
+          <tbody>
+            ${[['學費管理群組','匯款、收款確認、會計相關'],['Matrix 行政家長','Matrix 與小宇課程相關'],['IQ 行政家長','IQ 補課交接'],['V5 行政家長','V5 家長問題、賽季與課程討論']].map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <div class="sh">問問題要附上脈絡</div>
+        <div class="tpl-box">學生：___<br>家長：___<br>課程 / 賽季：___<br>家長問題：___<br>目前已知資訊：___<br>需要確認：___</div>
+        <div class="sh">問題升級路徑</div>
+        <table class="tbl">
+          <thead><tr><th>問題類型</th><th>第一詢問對象</th><th>第二詢問對象</th></tr></thead>
+          <tbody>
+            ${[['IQ 課程 / 補課','語釩','相關授課老師'],['Matrix 課程 / 補課','小宇','相關授課老師'],['V5 家長 / 課程 / 賽季','威德','Andy'],['費用 / 收款確認','學費管理群組','冠辰'],['比賽行政 / 公文','冠辰','威德']].map(([a,b,c])=>`<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`).join('')}
+          </tbody>
+        </table>`,
+      checks:[]
+    },
+    {
+      num:'七', title:'福利與基本制度', tag:'制度',
+      html:`
+        <div class="grid-2">
+          ${[['薪資發放日','每個月 5 號'],['平日上班時間','13:30 ～ 21:30'],['假日上班時間','08:45 ～ 17:45'],['勞健保','到職後確認資料是否完成']].map(([n,v])=>`<div class="card yellow-tint"><div class="card-title">${n}</div><div class="card-body" style="font-size:15px;font-weight:600;color:var(--text-primary)">${v}</div></div>`).join('')}
+        </div>
+        <div class="sh">請假規則</div>
+        <div class="list">
+          ${['請假要提前多久說（依公司規定）','臨時請假要通知主管','請假期間工作交接要交給誰','是否需要填寫請假表單'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'八', title:'工作時間與排班', tag:'排班',
+      html:`
+        <div class="grid-2">
+          <div class="card blue-tint"><div class="card-title">週一 ～ 週五</div><div class="card-body" style="font-size:16px;font-weight:600;color:var(--blue-600)">13:30 ～ 21:30</div></div>
+          <div class="card blue-tint"><div class="card-title">週六 ～ 週日</div><div class="card-body" style="font-size:16px;font-weight:600;color:var(--blue-600)">08:45 ～ 17:45</div></div>
+        </div>
+        <div class="sh">遲到或臨時不能到</div>
+        <div class="step-list">
+          ${['先通知主管','說明原因與預計到達時間','若當天有自己負責的待辦，要同步交接','涉及家長或學生的待辦，不可讓訊息中斷'].map((t,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body">${t}</div></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'九', title:'Google 日曆與重要日期', tag:'日曆',
+      html:`
+        <div class="sh">日曆要看什麼</div>
+        <div class="list">
+          ${['今日課程','說明會','集訓日','公休日','繳費提醒日'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="sh">行事曆不一致怎麼辦</div>
+        <div class="step-list">
+          ${['不要直接回覆家長','先確認最新版本','找負責老師或主管確認','確認後再回覆家長','若是公開資訊錯誤，提醒負責人更新'].map((t,i)=>`<div class="step-item"><div class="step-num">${i+1}</div><div class="step-body">${t}</div></div>`).join('')}
+        </div>`,
+      checks:[]
+    },
+    {
+      num:'十', title:'每日基本任務', tag:'日常',
+      html:`
+        <div class="grid-2">
+          ${[['現場整理','公共區域乾淨、飲品補貨、垃圾清理、個資紙張碎紙'],['基本事務','LINE 未讀訊息、家長待回覆、需老師確認的問題、收款補課待辦'],['資料更新','點名、請假、補課、收款、未解決問題下一步'],['課程確認','今天有哪些課、哪些老師在場、特殊活動或比賽通知']].map(([n,b])=>`<div class="card"><div class="card-title">${n}</div><div class="card-body">${b}</div></div>`).join('')}
+        </div>`,
+      checks:['公共區域整理完成','LINE 未讀訊息已全部處理','今日課程與到課狀況已確認','點名表已更新','收款已回報學費管理群組','未解決問題已標記下一步與負責人']
+    },
+    {
+      num:'十一', title:'日常行政小事', tag:'行政',
+      html:`
+        ${[['冰箱飲品','定期確認飲品狀況。若飲品不足，自行上 MOMO 訂購並報帳。'],['垃圾','下班前確認垃圾桶，有食物要拿出去丟。順便巡一下客座區。'],['燈光與冷氣（上班）','依現場使用狀況開啟。下午三點後有學生進入燈要全開。客座區有學生或家長記得開冷氣。開音樂。'],['燈光與冷氣（下班）','確認全部關閉。'],['個資紙張','若紙張上有私人資料，應碎紙處理。']].map(([n,d])=>`<div class="bc-box" style="border-left-color:var(--blue-400)"><div class="bc-title">${n}</div><div class="qa-a">${d}</div></div>`).join('')}`,
+      checks:[]
+    },
+    {
+      num:'十二', title:'每天收尾前確認', tag:'收尾',
+      html:`<div class="callout">每天下班前，逐項確認以下事項，確保沒有任何漏接。</div>`,
+      checks:['今天 LINE 是否還有未回覆家長','今天點名是否完成','今天請假、補課是否已記錄','今天收款是否已交給學費管理群組','今天需要老師確認的問題是否已轉交','今天未完成待辦是否有交接給下一位']
+    },
+    {
+      num:'十三', title:'常見問題 Q&A', tag:'Q&A',
+      html:`
+        ${[['Q1｜今天有沒有課要去哪裡看？','先查公司行事曆與課程表，再確認 LINE 是否有停課或調課通知。若不一致，先問主管或負責老師。'],['Q2｜家長問我不知道的問題怎麼辦？','先回覆：「這部分我協助向老師確認，確認後再回覆您。」再把問題整理完整丟給負責人。'],['Q3｜我找不到學生資料怎麼辦？','先查學生名單、LINE 標籤、點名表。若同名或資料不完整，問交接人或主管。'],['Q4｜收到匯款後要去哪裡登記？','先回覆家長收到後五碼，接著把孩子姓名、金額、後五碼、課程丟到學費管理群組，等確認後再回覆家長款項已確認。'],['Q5｜家長問補課時間怎麼辦？','先確認課程類型。IQ 找語釩，Matrix 找小宇，V5 找威德。不要直接承諾補課時段。'],['Q6｜現場用品快沒了怎麼辦？','先確認是否有備品。沒有備品時，回報負責人補貨或訂購。'],['Q7｜不知道優先順序怎麼辦？','① 現場學生安全與出缺席 ② 家長正在等待的即時問題 ③ 今日課程補課集訓比賽事項 ④ 今日繳費截止或表單截止 ⑤ 一般資料整理與環境整理']].map(([q,a])=>`<div class="qa-box"><div class="qa-q">${q}</div><div class="qa-a">${a}</div></div>`).join('')}`,
+      checks:[]
+    },
+    {
+      num:'十四', title:'最後提醒', tag:'提醒',
+      html:`
+        <div class="callout">新人剛加入時，不需要假裝什麼都知道。</div>
+        <div class="sh">真正重要的是這四件事</div>
+        <div class="step-list">
+          ${['知道去哪裡查','知道問誰','知道什麼不能亂承諾','知道每件事要留下紀錄'].map((t,i)=>`<div class="step-item"><div class="step-num" style="background:var(--yellow-400);color:var(--gray-800)">${i+1}</div><div class="step-body" style="font-size:15px;font-weight:600;color:var(--text-primary)">${t}</div></div>`).join('')}
+        </div>
+        <div class="callout yellow" style="margin-top:20px">把這四件事做好，就能大幅降低家長誤會、內部漏接與行政斷點。</div>`,
+      checks:[]
+    },
+    {
+      num:'十五', title:'手冊更新方式', tag:'維護',
+      html:`
+        <div class="sh">以下情況發生時，手冊應更新</div>
+        <div class="list">
+          ${['權限負責人異動','群組用途調整','行事曆位置改變','請假、補課、收款規則改變','福利制度改變','常用文件位置改變'].map(t=>`<div class="li"><span class="li-bullet">•</span><span>${t}</span></div>`).join('')}
+        </div>
+        <div class="callout" style="margin-top:16px">新人若發現手冊中有過期資訊，應回報主管或文件維護人。</div>`,
+      checks:[]
+    }
+  ]
+}
+];
+
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+let curDoc = 0;
+let curSec = [0, 0];
+const states = {};
+const navEls = [[], []];
+const secEls = [[], []];
+
+// ─────────────────────────────────────────────
+// Build DOM
+// ─────────────────────────────────────────────
+const navEl = document.getElementById('sidebar-nav');
+const mainEl = document.getElementById('main-content');
+
+DOCS.forEach((doc, di) => {
+  const label = document.createElement('div');
+  label.className = 'nav-section-label';
+  label.textContent = doc.label;
+  label.dataset.doc = di;
+  navEl.appendChild(label);
+
+  doc.sections.forEach((s, si) => {
+    // Nav item
+    const ni = document.createElement('div');
+    ni.className = 'nav-item';
+    ni.dataset.doc = di;
+    ni.innerHTML = `<span class="nav-num">${s.num}</span><span>${s.title}</span>`;
+    ni.addEventListener('click', () => { curSec[di] = si; showSec(di, si); });
+    navEl.appendChild(ni);
+    navEls[di].push(ni);
+
+    // Section
+    const cl = s.checks.length ? `
+      <div class="checklist-box">
+        <div class="checklist-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          階段檢核
+        </div>
+        ${s.checks.map((c, ci) => {
+          const id = `chk_${di}_${si}_${ci}`;
+          return `<div class="check-row"><input type="checkbox" id="${id}" data-k="${di}_${si}_${ci}"><label for="${id}">${c}</label></div>`;
+        }).join('')}
+      </div>` : '';
+
+    const sec = document.createElement('div');
+    sec.className = 'section';
+    sec.innerHTML = `<div class="section-tag">${s.tag}</div><h1>${s.num}、${s.title}</h1>${s.html}${cl}`;
+    mainEl.appendChild(sec);
+    secEls[di].push(sec);
+  });
+});
+
+// ─────────────────────────────────────────────
+// Progress
+// ─────────────────────────────────────────────
+function calcProgress(di) {
+  const total = DOCS[di].sections.reduce((a, s) => a + s.checks.length, 0);
+  const done = DOCS[di].sections.reduce((a, s, si) =>
+    a + s.checks.filter((_, ci) => states[`${di}_${si}_${ci}`]).length, 0);
+  return total > 0 ? Math.round(done / total * 100) : 0;
+}
+
+function updateProgress() {
+  const p = calcProgress(curDoc);
+  document.getElementById('prog-fill').style.width = p + '%';
+  document.getElementById('prog-label').textContent = p + '%';
+}
+
+mainEl.addEventListener('change', e => {
+  if (e.target.type === 'checkbox') {
+    states[e.target.dataset.k] = e.target.checked;
+    updateProgress();
+  }
+});
+
+// ─────────────────────────────────────────────
+// Navigation
+// ─────────────────────────────────────────────
+function showSec(di, si) {
+  // Update nav active state (only in current doc)
+  navEls[di].forEach((el, i) => el.classList.toggle('active', i === si));
+  // Update sections
+  secEls[di].forEach((el, i) => el.classList.toggle('active', i === si));
+  mainEl.scrollTop = 0;
+}
+
+function switchDoc(di) {
+  curDoc = di;
+  // Tab active
+  document.getElementById('tab-0').classList.toggle('active', di === 0);
+  document.getElementById('tab-1').classList.toggle('active', di === 1);
+
+  // Show/hide nav labels and items
+  navEl.querySelectorAll('[data-doc]').forEach(el => {
+    el.style.display = parseInt(el.dataset.doc) === di ? '' : 'none';
+  });
+
+  // Show/hide sections
+  DOCS.forEach((_, d) => {
+    secEls[d].forEach(el => el.classList.remove('active'));
+  });
+  showSec(di, curSec[di]);
+  updateProgress();
+}
+
+// ─────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────
+switchDoc(0);
+</script>
+</body>
+</html>
